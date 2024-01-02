@@ -1,29 +1,45 @@
 # How many days have you already lived
 # how_old_are_you_now = input("Please when you born in view dd.mm.yy")
 
-
-condition_for_while = True
-while condition_for_while:
+# Current time
+current_time_while_block = True
+while current_time_while_block:
     try:
-        current_time = input("Please enter current time in the format:'hours(24):minutes'")
-        sliced_current_time = current_time.split(':')
-        print(f"time_now is : {sliced_current_time}")
-        if sliced_current_time < 0 and sliced_current_time[0] > 24:
-            Print("error in if statement")
-
-
-        # tarrget_time = input("Please enter target time in the format: 'hours(24):minutes'")
-    except:
-        print("Sorry, you entered incorrect number of hours please reapet.")
+        current_time_nested_while_in_try_block = True
+        while current_time_nested_while_in_try_block:
+            current_time = input("Please enter current time in the format:'hours(24):minutes'")
+            sliced_current_time = current_time.split(':')
+            if int(sliced_current_time[0]) < 0 or int(sliced_current_time[0]) > 23 or int(sliced_current_time[1]) < 0 or int(sliced_current_time[1]) > 59: # if user enter 24 it will be a logical error
+                # target_time = input("Please enter target time in the format: 'hours(24):minutes'")
+                print("Sorry, you entered incorrect current time, Please repeat.")
+            else:
+                current_time_nested_while_in_try_block = False
+    except ValueError:
+        print("You entered something except colon(':')! Please enter valid format.")
     else:
-        print("Entered date is valid.")
-        condition_for_while = False
+        print("Check is passed. Current data format is valid. Thank you!")
+        current_time_while_block = False
 
+# Target time
+target_time_while_block = True
+while target_time_while_block:
+    try:
+        target_time_nested_while_in_try_block = True
+        while target_time_nested_while_in_try_block:
+            target_time = input("Please enter target time in the format: "
+                                "'hours(24):minutes'")
+            sliced_target_time = target_time.split(':')
+            if int(sliced_target_time[0]) < 0 or int(sliced_target_time[0]) > 23 or int(sliced_target_time[1]) < 0 or int(sliced_target_time[1]) > 59: # if user enter 24 it will be a logical error
+                print("Sorry, you entered incorrect target time, Please repeat.")
+            else:
+                target_time_nested_while_in_try_block = False
+    except ValueError:
+        print("You entered something except colon(':')! Please enter valid format.")
+    else:
+        print("Check is passed. Target data format is valid. Thank you!")
+        target_time_while_block = False
 
-sliced_target_time = tarrget_time.split(':')
-print(f"target_time is : {sliced_target_time}")
-
-
+# Formulas
 hours = (24 - int(sliced_current_time[0])) + int(sliced_target_time[0])
 print(f"hours : {hours}")
 if hours > 24:
