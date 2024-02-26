@@ -124,11 +124,24 @@ def view_all_tasks(task_list):
         print(disp_str)
 ##===========================================================================
 ## write to file
-def write_tasks_to_file(task_list_paramentr):
-    if not os.path.exists('tasks.txt'):
-        with open('tasks.txt', 'w') as default_file:
-            pass
+def write_tasks_to_file(task_list_paramentr, path_tasks_txt):
 
-    with open('tasks.txt', 'w') as task_file:
-        task_list_to_write = []
-        for 
+        with open(path_tasks_txt, "w") as task_file:
+            task_list_to_write = []
+            for t in task_list_paramentr:
+                str_attrs = [
+                    t['task_ID'],
+                    t['username'],
+                    t['title'],
+                    t['description'],
+                    t['due_date'].strftime(DATETIME_STRING_FORMAT),
+                    t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
+                    "Yes" if t['completed'] else "No"
+                ]
+                task_list_to_write.append(";".join(str_attrs))
+            task_file.write("\n".join(task_list_to_write))
+
+def create_exist_file(path_tasks_txt):
+        if not os.path.exists(path_tasks_txt):
+        with open(path_tasks_txt, 'w') as default_file:
+            pass
