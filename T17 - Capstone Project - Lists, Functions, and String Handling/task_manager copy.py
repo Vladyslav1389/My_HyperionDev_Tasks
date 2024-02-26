@@ -12,6 +12,7 @@ from All_done_functions import *
 
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
+path_tasks_txt = "tasks.txt"
 
 
 
@@ -135,14 +136,18 @@ e - Exit
                 mark_or_edit_choice = validate_username("If you would like to mark the task as complete please enter"
                                             " 'm', if you would like to edit the task please enter 'e': ")
                 if mark_or_edit_choice == 'm':
-                    task_list[int(user_task_choice) - 1]['completed'] = 'Yes'
+                    task_list[int(user_task_choice) - 1]['completed'] = True
                     user_task_choice = '-1'
+                    create_exist_file(path_tasks_txt)
+                    write_tasks_to_file(task_list, path_tasks_txt)
                     print(f"{task_list[int(user_task_choice) - 1]}")
                     
             else:
                 print("You entered task that do not assigned to particular user.")
                 
         print(f"{task_list[int(user_task_choice) - 1]}")
+
+        
 
         ##
         ## print("Please enter the number of task_ID to edit or enter '-1' to go to the main menu")
