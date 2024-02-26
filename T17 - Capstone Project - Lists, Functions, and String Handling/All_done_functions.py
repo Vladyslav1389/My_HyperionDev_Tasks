@@ -124,9 +124,9 @@ def view_all_tasks(task_list):
         print(disp_str)
 ##===========================================================================
 ## write to file
-def write_tasks_to_file(task_list_paramentr, path_tasks_txt):
+def write_tasks_to_file(task_list_paramentr, path_tasks_txt_parametr):
 
-        with open(path_tasks_txt, "w") as task_file:
+        with open(path_tasks_txt_parametr, "w") as task_file:
             task_list_to_write = []
             for t in task_list_paramentr:
                 str_attrs = [
@@ -143,5 +143,5 @@ def write_tasks_to_file(task_list_paramentr, path_tasks_txt):
 
 def create_exist_file(path_tasks_txt):
         if not os.path.exists(path_tasks_txt):
-        with open(path_tasks_txt, 'w') as default_file:
-            pass
+            with open(path_tasks_txt, 'w') as default_file:
+                pass
