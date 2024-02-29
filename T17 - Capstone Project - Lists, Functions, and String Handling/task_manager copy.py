@@ -156,6 +156,7 @@ e - Exit
                                                          "the username of the person to whom the task "
                                                          "is assigned\nor 'd' if you want to change the"
                                                          " due date of the task\nor any other button to choose another task: ")
+                    
                     if edit_task_choice == 'n':
                         print(f"All usernames of people: ", end='')
                         print(', '.join(username_password.keys()))
@@ -167,7 +168,12 @@ e - Exit
                                 write_tasks_to_file(task_list, path_tasks_txt)
                                 break
                             else:
-                                print("Unexist person or incorrect person name!")                 
+                                print("Unexist person or incorrect person name!")
+                    
+                    if edit_task_choice == 'd':
+                        task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
+                        write_tasks_to_file(task_list, path_tasks_txt)
+
             else:
                 print("You entered task that do not assigned to particular user.")
                 
