@@ -156,11 +156,11 @@ e - Exit
                                                          "the username of the person to whom the task "
                                                          "is assigned or 'd' if you want to change the due date of the task: ")
                     if edit_task_choice == 'n':
-                        print(f"All usernames of people.\n{list_of_all_users(task_list)}/n{'-'*80}")
+                        print(f"All usernames of people.\n{username_password.keys()}\n{'-'*80}")
                         try:
                             new_assigned_user = validate_username("Please enter the name of the person"
                                                               "to whom you want to assign the task to: ")
-                            if new_assigned_user in list_of_all_users(task_list):
+                            if new_assigned_user in username_password.keys():
                                 task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
                         except:
                             print("Unexist person or incorrect person name!")
