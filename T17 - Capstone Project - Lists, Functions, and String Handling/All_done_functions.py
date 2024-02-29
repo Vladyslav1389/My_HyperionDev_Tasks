@@ -7,6 +7,17 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 path_tasks_txt = "tasks.txt"
 
 ##===========================================================================
+def date_validation():
+    while True:
+        try:
+            task_due_date = input("Due date of task (YYYY-MM-DD): ")
+            due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
+            break
+
+        except ValueError:
+            print("Invalid datetime format. Please use the format specified")
+    return due_date_time
+##===========================================================================
 def validate_username(message_parametr):
 
     user_input = input(message_parametr).strip()
@@ -66,14 +77,7 @@ def add_task(task_list, username_password):
         return add_task(task_list, username_password)
     task_title = validate_username("Title of Task: ")
     task_description = validate_username("Description of Task: ")
-    while True:
-        try:
-            task_due_date = input("Due date of task (YYYY-MM-DD): ")
-            due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
-            break
-
-        except ValueError:
-            print("Invalid datetime format. Please use the format specified")
+    due_date_time = date_validation()
 
 
     # Then get the current date.
@@ -149,11 +153,11 @@ def create_exist_file(path_tasks_txt):
                 pass
 ##===========================================================================
 ### displaying the users
-def list_of_all_users(task_list_parameter):
-    for task in task_list_parameter:
-        for user in task:
-            all_users = []
-            all_users.append(user['username'])
-            return all_users
+# def list_of_all_users(task_list_parameter):
+#     for task in task_list_parameter:
+#         for user in task:
+#             all_users = []
+#             all_users.append(user['username'])
+#             return all_users
 
 
