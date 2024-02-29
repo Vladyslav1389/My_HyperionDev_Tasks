@@ -15,6 +15,14 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 path_tasks_txt = "tasks.txt"
 
 
+# def list_of_all_users(task_list_parameter):
+#     for task in task_list_parameter:
+#         for user in task:
+#             all_users = []
+#             all_users.append(user['username'])
+#             return all_users
+
+
 
 # Create tasks.txt if it doesn't exist
 if not os.path.exists("tasks.txt"):
@@ -135,13 +143,28 @@ e - Exit
             if user_task_choice in user_tasks:
                 mark_or_edit_choice = validate_username("If you would like to mark the task as complete please enter"
                                             " 'm', if you would like to edit the task please enter 'e': ")
+ ###==========================================================================               
                 if mark_or_edit_choice == 'm':
                     task_list[int(user_task_choice) - 1]['completed'] = True
                     user_task_choice = '-1'
                     create_exist_file(path_tasks_txt)
                     write_tasks_to_file(task_list, path_tasks_txt)
                     print(f"{task_list[int(user_task_choice) - 1]}")
-                    
+ ###==========================================================================               
+                if mark_or_edit_choice == 'e':
+                    edit_task_choice = validate_username("Please enter 'n' if you want to change "
+                                                         "the username of the person to whom the task "
+                                                         "is assigned or 'd' if you want to change the due date of the task: ")
+                    if edit_task_choice == 'n':
+                        print(f"All usernames of people.\n{list_of_all_users(task_list)}/n{'-'*80}")
+                        try:
+                            new_assigned_user = validate_username("Please enter the name of the person"
+                                                              "to whom you want to assign the task to: ")
+                            if new_assigned_user in list_of_all_users(task_list):
+                                task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
+                        except:
+                            print("Unexist person or incorrect person name!")
+                                            
             else:
                 print("You entered task that do not assigned to particular user.")
                 
