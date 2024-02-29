@@ -154,17 +154,20 @@ e - Exit
                 if mark_or_edit_choice == 'e':
                     edit_task_choice = validate_username("Please enter 'n' if you want to change "
                                                          "the username of the person to whom the task "
-                                                         "is assigned or 'd' if you want to change the due date of the task: ")
+                                                         "is assigned\nor 'd' if you want to change the"
+                                                         " due date of the task\nor any other button to choose another task: ")
                     if edit_task_choice == 'n':
-                        print(f"All usernames of people.\n{username_password.keys()}\n{'-'*80}")
-                        try:
+                        print(f"All usernames of people: ", end='')
+                        print(', '.join(username_password.keys()))
+                        while True:
                             new_assigned_user = validate_username("Please enter the name of the person"
-                                                              "to whom you want to assign the task to: ")
+                                                              " to whom you want to assign the task to: ")
                             if new_assigned_user in username_password.keys():
                                 task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
-                        except:
-                            print("Unexist person or incorrect person name!")
-                                            
+                                write_tasks_to_file(task_list, path_tasks_txt)
+                                break
+                            else:
+                                print("Unexist person or incorrect person name!")                 
             else:
                 print("You entered task that do not assigned to particular user.")
                 
