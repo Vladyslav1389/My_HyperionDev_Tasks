@@ -4,6 +4,7 @@ from datetime import datetime, date
 
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
+path_tasks_txt = "tasks.txt"
 
 ##===========================================================================
 def validate_username(message_parametr):
@@ -90,20 +91,21 @@ def add_task(task_list, username_password):
     }
 
     task_list.append(new_task)
-    with open("tasks.txt", "w") as task_file:
-        task_list_to_write = []
-        for t in task_list:
-            str_attrs = [
-                t['task_ID'],
-                t['username'],
-                t['title'],
-                t['description'],
-                t['due_date'].strftime(DATETIME_STRING_FORMAT),
-                t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
-                "Yes" if t['completed'] else "No"
-            ]
-            task_list_to_write.append(";".join(str_attrs))
-        task_file.write("\n".join(task_list_to_write))
+    write_tasks_to_file(task_list, path_tasks_txt)
+    # with open("tasks.txt", "w") as task_file:
+    #     task_list_to_write = []
+    #     for t in task_list:
+    #         str_attrs = [
+    #             t['task_ID'],
+    #             t['username'],
+    #             t['title'],
+    #             t['description'],
+    #             t['due_date'].strftime(DATETIME_STRING_FORMAT),
+    #             t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
+    #             "Yes" if t['completed'] else "No"
+    #         ]
+    #         task_list_to_write.append(";".join(str_attrs))
+    #     task_file.write("\n".join(task_list_to_write))
     print("Task successfully added.")
     print(task_list)
 ##===========================================================================
@@ -145,3 +147,13 @@ def create_exist_file(path_tasks_txt):
         if not os.path.exists(path_tasks_txt):
             with open(path_tasks_txt, 'w') as default_file:
                 pass
+##===========================================================================
+### displaying the users
+def list_of_all_users(task_list_parameter):
+    for task in task_list_parameter:
+        for user in task:
+            all_users = []
+            all_users.append(user['username'])
+            return all_users
+
+
