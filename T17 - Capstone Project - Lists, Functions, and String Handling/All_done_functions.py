@@ -16,20 +16,12 @@ def date_validation():
 
         except ValueError:
             print("Invalid datetime format. Please use the format specified")
-    return due_date_time
-##===========================================================================
-def validate_username(message_parametr):
-
-    user_input = input(message_parametr).strip()
-
-    if user_input == "":
-        print("Sorry, but you inputed nothing.")
-        return validate_username(message_parametr)
+    curr_date = datetime.now()
+    if due_date_time.date() >= curr_date.date():
+        return due_date_time.date()
     else:
-        return user_input
-
-# message = "Please input the user name: "
-# print(validate_username(message))
+        print("The due date cannot be before the current date.")
+        return date_validation()
 
 ##===========================================================================
 def reg_user(username_password):
