@@ -164,5 +164,31 @@ def create_exist_file(path_tasks_txt):
 #             all_users = []
 #             all_users.append(user['username'])
 #             return all_users
-
-
+##===========================================================================
+# def display_user_task(task_list_parameter, curr_user_parameter):
+#     user_tasks = []
+#     for t in task_list_parameter:
+#         if t['username'] == curr_user_parameter:
+#             disp_str = f"Task ID: \t {t['task_ID']}\n"
+#             disp_str += f"Task: \t\t {t['title']}\n"
+#             disp_str += f"Assigned to: \t {t['username']}\n"
+#             disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n"
+#             disp_str += f"Due Date: \t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n"
+#             disp_str += f"Task Complete? \t {"Yes" if t['completed'] is True else "No"}\n"
+#             disp_str += f"Task Description: \n {t['description']}\n"
+#             print(disp_str)
+#             user_tasks.append(t['task_ID'])
+#     return user_tasks
+##===========================================================================
+def change_username(username_password, user_task_choice, task_list):
+    print(f"All usernames of people: ", end='')
+    print(', '.join(username_password.keys()))
+    while True:
+        new_assigned_user = validate_username("Please enter the name of the person"
+                                        " to whom you want to assign the task to: ")
+        if new_assigned_user in username_password.keys():
+            task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
+            write_tasks_to_file(task_list, path_tasks_txt)
+            break
+        else:
+            print("Unexist person or incorrect person name!")

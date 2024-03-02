@@ -1,8 +1,8 @@
-# Notes: 
-# 1. Use the following username and password to access the admin rights 
+# Notes:
+# 1. Use the following username and password to access the admin rights
 # username: admin
 # password: password
-# 2. Ensure you open the whole folder for this task in VS Code otherwise the 
+# 2. Ensure you open the whole folder for this task in VS Code otherwise the
 # program will look in your root directory for the text files.
 
 #=====importing libraries===========
@@ -13,6 +13,8 @@ from All_done_functions import *
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 path_tasks_txt = "tasks.txt"
+path_task_overview_txt = "task_overview.txt"
+path_user_overview_txt = "user_overview.txt"
 
 
 # def list_of_all_users(task_list_parameter):
@@ -100,7 +102,7 @@ vm - View my task
 ds - Display statistics
 e - Exit
 : ''').lower()
-
+##gr - generate reports
 ##===========================================================================
     if menu == 'r':
         reg_user(username_password)
@@ -143,14 +145,14 @@ e - Exit
             if user_task_choice in user_tasks:
                 mark_or_edit_choice = validate_username("If you would like to mark the task as complete please enter"
                                             " 'm', if you would like to edit the task please enter 'e': ")
- ###==========================================================================               
+ ###==========================================================================
                 if mark_or_edit_choice == 'm':
                     task_list[int(user_task_choice) - 1]['completed'] = True
                     user_task_choice = '-1'
                     create_exist_file(path_tasks_txt)
                     write_tasks_to_file(task_list, path_tasks_txt)
                     print(f"{task_list[int(user_task_choice) - 1]}")
- ###==========================================================================               
+ ###==========================================================================
                 if mark_or_edit_choice == 'e':
                     if task_list[int(user_task_choice) - 1]['completed'] == False:
 
@@ -160,17 +162,7 @@ e - Exit
                                                             " due date of the task\nor any other button to choose another task: ")
                         
                         if edit_task_choice == 'n':
-                            print(f"All usernames of people: ", end='')
-                            print(', '.join(username_password.keys()))
-                            while True:
-                                new_assigned_user = validate_username("Please enter the name of the person"
-                                                                " to whom you want to assign the task to: ")
-                                if new_assigned_user in username_password.keys():
-                                    task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
-                                    write_tasks_to_file(task_list, path_tasks_txt)
-                                    break
-                                else:
-                                    print("Unexist person or incorrect person name!")
+                            change_username(username_password, user_task_choice, task_list)
                         
                         if edit_task_choice == 'd':
                             task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
@@ -182,18 +174,11 @@ e - Exit
                 print("You entered task that do not assigned to particular user.")
                 
         print(f"{task_list[int(user_task_choice) - 1]}")
-
-        
-
-        ##
-        ## print("Please enter the number of task_ID to edit or enter '-1' to go to the main menu")
-        ## user_choice = str(input(^))
-        ##
-
-                
-
-
 ##===========================================================================
+    elif menu == 'gr' and curr_user == 'admin':
+        create_exist_file(path_task_overview_txt)
+        create_exist_file(path_user_overview_txt)
+
 ##===========================================================================
     elif menu == 'ds' and curr_user == 'admin':
         '''If the user is an admin they can display statistics about number of users
@@ -204,7 +189,7 @@ e - Exit
         print("-----------------------------------")
         print(f"Number of users: \t\t {num_users}")
         print(f"Number of tasks: \t\t {num_tasks}")
-        print("-----------------------------------")    
+        print("-----------------------------------")
 
     elif menu == 'e':
         print('Goodbye!!!')
