@@ -210,3 +210,9 @@ def edit_task(user_task_choice, task_list, username_password):
     else:
         print("This task is already completed.")
 ##===========================================================================
+def completed_task(task_list):
+    completed = 0
+    for task in task_list:
+        if task["completed"]:
+            completed += 1
+    return completed
