@@ -162,8 +162,18 @@ e - Exit
         print(f"{task_list[int(user_task_choice) - 1]}")
 ##===========================================================================
     elif menu == 'gr' and curr_user == 'admin':
-        create_exist_file(path_task_overview_txt)
-        create_exist_file(path_user_overview_txt)
+        # create_exist_file(path_task_overview_txt)
+        # create_exist_file(path_user_overview_txt)
+        with open(path_task_overview_txt, 'w') as task_overview_file:
+            content = f"The total number of tasks is: \t\t\t {len(task_list)}\n"
+            content += f"The total number of completed tasks is: \t {completed_task(task_list)}\n"
+            content += f"The total number of uncompleted tasks is \t {len(task_list) - completed_task(task_list)}\n"
+            """▪ The total number of tasks that haven’t been completed and
+            that are overdue.
+            ▪ The percentage of tasks that are incomplete.
+            ▪ The percentage of tasks that are overdue."""
+            task_overview_file.write(content)
+            print("GR succes")
 
 ##===========================================================================
     elif menu == 'ds' and curr_user == 'admin':
