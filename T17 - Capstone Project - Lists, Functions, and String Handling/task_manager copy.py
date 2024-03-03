@@ -9,6 +9,7 @@
 import os
 from datetime import datetime, date
 from All_done_functions import *
+from tabulate import tabulate
 
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
@@ -164,16 +165,22 @@ e - Exit
     elif menu == 'gr' and curr_user == 'admin':
         # create_exist_file(path_task_overview_txt)
         # create_exist_file(path_user_overview_txt)
+        total_num_tasks = len(task_list)
+        total_completed_tasks = completed_task(task_list, "completed")
+        uncompleted_tasks = len(task_list) - completed_task(task_list, "completed")
+        overdue_tasks = completed_task(task_list, "due_date")
+        uncompleted_overdue = uncompleted_tasks + overdue_tasks
+        percent_uncompleted_tasks = round((uncompleted_tasks * 100) / total_num_tasks, 2)
+        percent_overdue_tasks = round((overdue_tasks * 100) / total_num_tasks, 2)
         with open(path_task_overview_txt, 'w') as task_overview_file:
-            content = f"The total number of tasks is: \t\t\t {len(task_list)}\n"
-            content += f"The total number of completed tasks is: \t {completed_task(task_list)}\n"
-            content += f"The total number of uncompleted tasks is \t {len(task_list) - completed_task(task_list)}\n"
-            """▪ The total number of tasks that haven’t been completed and
-            that are overdue.
-            ▪ The percentage of tasks that are incomplete.
-            ▪ The percentage of tasks that are overdue."""
+            content = f"The total number of tasks is: \t\t\t\t\t\t\t {total_num_tasks}\n"
+            content += f"The total number of completed tasks is: \t\t\t\t {total_completed_tasks}\n"
+            content += f"The total number of uncompleted tasks is: \t\t\t \t{uncompleted_tasks}\n"
+            content += f"The total number of uncompleted and overdue tasks is: \t {uncompleted_overdue}\n"
+            content += f"The percentage of tasks that are incomplete: \t\t\t {percent_uncompleted_tasks}\n"
+            content += f"The percentage of tasks that are overdue is: \t\t\t{percent_overdue_tasks}"
             task_overview_file.write(content)
-            print("GR succes")
+            print("GR success")
 
 ##===========================================================================
     elif menu == 'ds' and curr_user == 'admin':
