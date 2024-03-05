@@ -250,17 +250,25 @@ def task_overview_report(task_list):
     percent_uncompleted_tasks = round((uncompleted_tasks * 100) / total_num_tasks, 2)
     percent_overdue_tasks = round((overdue(uncompleted_overdue) * 100) / uncompleted_tasks, 2)
     with open(path_task_overview_txt, 'w') as task_overview_file:
-        content = f"The total number of tasks is: \t\t\t\t\t\t\t {total_num_tasks}\n"
-        content += f"The total number of completed tasks is: \t\t\t\t {completed_tasks}\n"
-        content += f"The total number of uncompleted tasks is: \t\t\t \t{uncompleted_tasks}\n"
-        content += f"The total number of uncompleted and overdue tasks is: \t {len(uncompleted_overdue)}\n"
-        content += f"The percentage of tasks that are incomplete: \t\t\t {percent_uncompleted_tasks}\n"
-        content += f"The percentage of tasks that are overdue is: \t\t\t{percent_overdue_tasks}"
-        content += f"task that overdue and incompleted "
-        task_overview_file.write(content)
+        content = f"The total number of tasks is:\t{total_num_tasks}\n"
+        content += f"The total number of completed tasks is:\t{completed_tasks}\n"
+        content += f"The total number of uncompleted tasks is:\t{uncompleted_tasks}\n"
+        content += f"The total number of uncompleted and overdue tasks is:\t{len(uncompleted_overdue)}\n"
+        content += f"The percentage of tasks that are incomplete:\t{percent_uncompleted_tasks}\n"
+        content += f"The percentage of tasks that are overdue is:\t{percent_overdue_tasks}"
+        align_to_left(content)
+
+        task_overview_file.write(align_to_left(content))
         print("GR success")
 ##===========================================================================
-#Justify / ALign (left, mid, right)
-# print("{0:<10}".format("Guido"))    # 'Guido     '
-# print("{0:>10}".format("Guido"))    # '     Guido'
-# print("{0:^10}".format("Guido"))    # '  Guido  
+def align_to_left(content):
+    splited = content.split('\n')
+    print(splited)
+    max_len = len(max(splited, key=len))
+    aligned_content = ''
+    for line in splited:
+        indentation = '.'*(max_len - len(line))
+        line = line.replace('\t', indentation)
+        aligned_content += line + "\n"
+    return aligned_content
+##===========================================================================

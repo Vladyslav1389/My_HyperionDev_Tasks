@@ -1,6 +1,6 @@
-The total number of tasks is: 							 15
-The total number of completed tasks is: 				 5
-The total number of uncompleted tasks is: 			 	10
-The total number of uncompleted and overdue tasks is: 	      7
-The percentage of tasks that are incomplete: 			 66.67
-The percentage of tasks that are overdue is: 			70.0task that overdue and incompleted 
+The total number of tasks is:.......................15
+The total number of completed tasks is:..............5
+The total number of uncompleted tasks is:...........10
+The total number of uncompleted and overdue tasks is:7
+The percentage of tasks that are incomplete:.....66.67
+The percentage of tasks that are overdue is:......70.0
