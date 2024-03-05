@@ -3,8 +3,13 @@ from datetime import datetime, date
 
 
 
+
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 path_tasks_txt = "tasks.txt"
+curr_date = datetime.now()
+path_tasks_txt = "tasks.txt"
+path_task_overview_txt = "task_overview.txt"
+path_user_overview_txt = "user_overview.txt"
 
 ##===========================================================================
 def date_validation():
@@ -16,8 +21,7 @@ def date_validation():
 
         except ValueError:
             print("Invalid datetime format. Please use the format specified")
-    curr_date = datetime.now()
-    if due_date_time.date() >= curr_date.date():
+    if due_date_time >= curr_date:
         return due_date_time.date()
     else:
         print("The due date cannot be before the current date.")
@@ -86,7 +90,6 @@ def add_task(task_list, username_password):
 
 
     # Then get the current date.
-    curr_date = date.today()
     ''' Add the data to the file task.txt and
         Include 'No' to indicate if the task is complete.'''
     new_task = {
@@ -116,6 +119,7 @@ def add_task(task_list, username_password):
     #         task_list_to_write.append(";".join(str_attrs))
     #     task_file.write("\n".join(task_list_to_write))
     print("Task successfully added.")
+    print('-'*79)
     print(task_list)
 ##===========================================================================
 def view_all_tasks(task_list):
@@ -213,6 +217,50 @@ def edit_task(user_task_choice, task_list, username_password):
 def completed_task(task_list):
     completed = 0
     for task in task_list:
-        if task["completed"]:
+        if task['completed']:
             completed += 1
     return completed
+##===========================================================================
+def uncompleted_task(task_list):
+    uncompleted = 0
+    for task in task_list:
+        if task['completed'] != True:
+            uncompleted += 1
+    return uncompleted
+##===========================================================================
+def uncompleted_overdue_tasks(task_list):
+    uncompleted_overdue_list =[]
+    for task in task_list:
+        if task['completed'] == False and task['due_date'] <= curr_date:
+            uncompleted_overdue_list.append(task)
+    return uncompleted_overdue_list
+##===========================================================================
+def overdue(uncompleted_overdue):
+    counter = 0
+    for task in uncompleted_overdue:
+        if task['due_date'] <= curr_date:
+            counter += 1
+    return counter
+##===========================================================================
+def task_overview_report(task_list):
+    total_num_tasks = len(task_list)
+    completed_tasks = completed_task(task_list)
+    uncompleted_tasks = uncompleted_task(task_list)
+    uncompleted_overdue = uncompleted_overdue_tasks(task_list)
+    percent_uncompleted_tasks = round((uncompleted_tasks * 100) / total_num_tasks, 2)
+    percent_overdue_tasks = round((overdue(uncompleted_overdue) * 100) / uncompleted_tasks, 2)
+    with open(path_task_overview_txt, 'w') as task_overview_file:
+        content = f"The total number of tasks is: \t\t\t\t\t\t\t {total_num_tasks}\n"
+        content += f"The total number of completed tasks is: \t\t\t\t {completed_tasks}\n"
+        content += f"The total number of uncompleted tasks is: \t\t\t \t{uncompleted_tasks}\n"
+        content += f"The total number of uncompleted and overdue tasks is: \t {len(uncompleted_overdue)}\n"
+        content += f"The percentage of tasks that are incomplete: \t\t\t {percent_uncompleted_tasks}\n"
+        content += f"The percentage of tasks that are overdue is: \t\t\t{percent_overdue_tasks}"
+        content += f"task that overdue and incompleted "
+        task_overview_file.write(content)
+        print("GR success")
+##===========================================================================
+#Justify / ALign (left, mid, right)
+# print("{0:<10}".format("Guido"))    # 'Guido     '
+# print("{0:>10}".format("Guido"))    # '     Guido'
+# print("{0:^10}".format("Guido"))    # '  Guido  

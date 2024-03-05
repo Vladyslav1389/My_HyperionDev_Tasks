@@ -1,8 +1,12 @@
 import os
-import All_done_functions
+from All_done_functions import *
 from datetime import datetime, date
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
+curr_date = datetime.now()
+path_tasks_txt = "tasks.txt"
+path_task_overview_txt = "task_overview.txt"
+path_user_overview_txt = "user_overview.txt"
 
 # def date_validation():
 #     while True:
@@ -126,13 +130,33 @@ for task_ID, t_str in enumerate(task_data, 1):
 
 # print('-'*80)
 # print(list_of_all_users(username_password))
-curr_date = datetime.now()
 
-def uncompleted_overdue(task_list, curr_date):
+
+# def uncompleted_overdue(task_list):
+#     counter = 0
+#     curr_date = date.today()
+#     for task in task_list:
+#         if task['completed'] == False and task['due_date'] <= curr_date:
+#             counter += 1
+#     return counter
+
+def uncompleted_overdue_tasks(task_list):
     counter = 0
+    uncompleted_overdue_list =[]
     for task in task_list:
         if task['completed'] == False and task['due_date'] <= curr_date:
             counter += 1
+            uncompleted_overdue_list.append(task)
+    return uncompleted_overdue_list
+
+# print(uncompleted_overdue_tasks(task_list))
+
+def overdue_tasks(task_list):
+    counter = 0
+    for task in task_list:
+        if task['due_date'] <= curr_date:
+            counter += 1
     return counter
 
-print(uncompleted_overdue(task_list, curr_date))
+
+task_overview_report(task_list)
