@@ -10,7 +10,6 @@ import os
 from datetime import datetime, date
 from All_done_functions import *
 curr_date = datetime.now()
-from tabulate import tabulate
 
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
@@ -53,7 +52,6 @@ for task_ID, t_str in enumerate(task_data, 1):
     curr_t['completed'] = True if task_components[6] == "Yes" else False
 
     task_list.append(curr_t)
-print(f"task_list={task_list}")
 
 
 #====Login Section====
@@ -88,22 +86,26 @@ while not logged_in:
         print("Wrong password")
         continue
     else:
+        print('-'*79)
         print("Login Successful!")
         logged_in = True
 
 
 while True:
-    # presenting the menu to the user and 
-    # making sure that the user input is converted to lower case.
+    # Presenting the menu to the user and 
+    # making sure that the user input is converted to lowercase.
     print()
+    print('='*79)
     menu = validate_username('''Select one of the following Options below:
 r - Registering a user
 a - Adding a task
 va - View all tasks
 vm - View my task
+gr - Generate report
 ds - Display statistics
 e - Exit
 : ''').lower()
+    print('='*79)
 ##gr - generate reports
 ##===========================================================================
     if menu == 'r':
@@ -114,58 +116,16 @@ e - Exit
         add_task(task_list, username_password)
 ##===========================================================================
 ##===========================================================================
-
     elif menu == 'va':
         view_all_tasks(task_list)
-            
 ##===========================================================================
 ##===========================================================================
-
     elif menu == 'vm':
-        '''Reads the task from task.txt file and prints to the console in the 
-           format of Output 2 presented in the task pdf (i.e. includes spacing
-           and labelling)
-        '''
-        user_tasks = []
-        for t in task_list:
-            if t['username'] == curr_user:
-                disp_str = f"Task ID: \t {t['task_ID']}\n"
-                disp_str += f"Task: \t\t {t['title']}\n"
-                disp_str += f"Assigned to: \t {t['username']}\n"
-                disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n"
-                disp_str += f"Due Date: \t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n"
-                disp_str += f"Task Complete? \t {"Yes" if t['completed'] is True else "No"}\n"
-                disp_str += f"Task Description: \n {t['description']}\n"
-                print(disp_str)
-                user_tasks.append(t['task_ID'])
-        #         print(f"in the loop : {user_tasks}")
-        # print(f"out for loop : {user_tasks}")
-        user_task_choice = ''
-        while user_task_choice != '-1':
-            user_task_choice = validate_username("Please enter either a specific task"
-                                 " (by entering Task ID number) or input ‘-1’ to return to the main menu: ")
-            if user_task_choice in user_tasks:
-                mark_or_edit_choice = validate_username("If you would like to mark the task as complete please enter"
-                                            " 'm', if you would like to edit the task please enter 'e': ")
- ###==========================================================================
-                if mark_or_edit_choice == 'm':
-                    task_list[int(user_task_choice) - 1]['completed'] = True
-                    user_task_choice = '-1'
-                    create_exist_file(path_tasks_txt)
-                    write_tasks_to_file(task_list, path_tasks_txt)
-                    print(f"{task_list[int(user_task_choice) - 1]}")
- ###==========================================================================
-                if mark_or_edit_choice == 'e':
-                    edit_task(user_task_choice, task_list, username_password)
-
-            else:
-                print("You entered task that do not assigned to particular user.")
-                
-        print(f"{task_list[int(user_task_choice) - 1]}")
+        view_user_task(task_list, curr_user)
 ##===========================================================================
     elif menu == 'gr' and curr_user == 'admin':
         task_overview_report(task_list)
-
+        user_overview_report(task_list, username_password)
 ##===========================================================================
     elif menu == 'ds' and curr_user == 'admin':
         '''If the user is an admin they can display statistics about number of users
@@ -173,10 +133,12 @@ e - Exit
         num_users = len(username_password.keys())
         num_tasks = len(task_list)
 
-        print("-----------------------------------")
-        print(f"Number of users: \t\t {num_users}")
-        print(f"Number of tasks: \t\t {num_tasks}")
-        print("-----------------------------------")
+        # print("-----------------------------------")
+        # print(f"Number of users: \t\t {num_users}")
+        # print(f"Number of tasks: \t\t {num_tasks}")
+        # print("-----------------------------------")
+        print(task_overview_report(task_list))
+        print(user_overview_report(task_list, username_password))
 
     elif menu == 'e':
         print('Goodbye!!!')

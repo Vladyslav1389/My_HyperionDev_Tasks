@@ -71,17 +71,17 @@ path_user_overview_txt = "user_overview.txt"
 
 # DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
-# with open("user.txt", 'r') as user_file:
-#     user_data = user_file.read().split("\n")
-#     print(user_data)
-#     print(type(user_data))
+with open("user.txt", 'r') as user_file:
+    user_data = user_file.read().split("\n")
+    # print(user_data)
+    # print(type(user_data))
 
-# username_password = {}
-# for user in user_data:
-#     username, password = user.split(';')
-#     username_password[username] = password
-# print(username_password)
-# print(username_password.keys())
+username_password = {}
+for user in user_data:
+    username, password = user.split(';')
+    username_password[username] = password
+print(f"username_password = {username_password}")
+print(f"username_password.keys() = {username_password.keys()}")
 
 
 with open("tasks.txt", 'r') as task_file:
@@ -159,4 +159,6 @@ def overdue_tasks(task_list):
     return counter
 
 
-task_overview_report(task_list)
+# task_overview_report(task_list)
+user_overview_report(task_list, username_password)
+# total_amount_of_user_task(task_list, username_password)
