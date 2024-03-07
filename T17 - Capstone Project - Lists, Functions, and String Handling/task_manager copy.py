@@ -62,7 +62,7 @@ def reg_user(username_password: dict) -> None:
     
     :param username_password: is a dictionary that stores usernames as keys and
     passwords as values.
-    :type: dict
+    :type username_password: dict
     :return: None
     """
     # Check if the new username already exists, it will recursively prompt the
@@ -98,13 +98,20 @@ def reg_user(username_password: dict) -> None:
 
 
 ##===========================================================================
-def add_task(task_list, username_password):
+def add_task(task_list: list, username_password: dict) -> None:
     '''Allow a user to add a new task to task.txt file
     Prompt a user for the following: 
-        - A username of the person whom the task is assigned to,
+        - A username of the person to whom the task is assigned to,
         - A title of a task,
         - A description of the task and 
         - The due date of the task.
+
+    :param task_list: List of all tasks.
+    :type task_list: list
+    :param username_password: Dictionary that stores usernames as keys and
+        passwords as values.
+    :type username_password: dict
+    :return: None
     '''
 
     # Check if the input user exists by recursively prompting the user for
@@ -139,12 +146,17 @@ def add_task(task_list, username_password):
 
 
 ##===========================================================================
-def view_all_tasks(task_list):
-    '''Reads the task from task.txt file and prints to the console in the 
-           format of Output 2 presented in the task pdf (i.e. includes spacing
-           and labelling) 
-    '''
+def view_all_tasks(task_list: list) -> None:
+    """
+    Displays all tasks in a user-friendly way.
 
+    :param task_list: List of all tasks.
+    :type task_list: list
+    :return: None
+    """
+
+    # Iterates through all tasks list and puts all information to the disp_str
+    # variable in a user-friendly way to print it in the terminal.
     for t in task_list:
         disp_str = f"Task ID: \t {t['task_ID']}\n"
         disp_str += f"Task: \t\t {t['title']}\n"
