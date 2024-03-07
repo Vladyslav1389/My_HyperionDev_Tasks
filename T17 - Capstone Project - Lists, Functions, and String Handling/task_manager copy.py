@@ -1,20 +1,37 @@
+"""
+It is a task manager that allows to add users, add tasks, modify tasks( change
+the person to whom the task is assigned, change the due date, and mark a task
+as completed). Track all tasks and track tasks that are assigned to each
+person. It also allows the admin to generate, display and write reports into
+a file. 
+"""
 
-#=====importing libraries===========
+
 import os
 from datetime import datetime, date
 
 
-curr_date = datetime.now()
-DATETIME_STRING_FORMAT = "%Y-%m-%d"
-path_user_txt = "user.txt"
-path_tasks_txt = "tasks.txt"
-path_task_overview_txt = "task_overview.txt"
-path_user_overview_txt = "user_overview.txt"
-
 ##===========================================================================
-def display_menu(curr_user):
+def display_menu(curr_user: str) -> str:
+    """
+    The function `display_menu` presents a menu of options based on the current
+    user, allowing them to select various actions.
+    
+    :param curr_user: The user that logged in.
+    :type curr_user: str
+    :return: Display menu options based on the user type. If the current user
+        is 'admin', the menu includes additional options such as 'gr - Generate
+        report' and 'ds - Display statistics'. If the current user is not
+        'admin', the menu does not include these additional options. The
+        function returns the selected menu option as a lowercase string.
+    :rtype: str
+    """
+
+    # Checking if the current user is 'admin'. If the current user is 'admin',
+    # it will display a menu with additional options: generating a report and
+    # displaying statistics.
     if curr_user == 'admin':
-        menu = validate_username('''Select one of the following Options below:
+        menu = input_validation('''Select one of the following Options below:
 r - Registering a user
 a - Adding a task
 va - View all tasks
@@ -24,8 +41,9 @@ ds - Display statistics
 e - Exit
 : ''').lower()
         return menu
+
     else:
-        menu = validate_username('''Select one of the following Options below:
+        menu = input_validation('''Select one of the following Options below:
 r - Registering a user
 a - Adding a task
 va - View all tasks
@@ -33,11 +51,29 @@ vm - View my task
 e - Exit
 : ''').lower()
         return menu
+
+
 ##===========================================================================
-def reg_user(username_password):
-    '''Add a new user to the user.txt file'''
-    # - Request input of a new username
-    new_username = validate_username("New Username: ")
+def reg_user(username_password: dict) -> None:
+    """
+    The function `reg_user` registers a new user by prompting for a username 
+    and password, validating the inputs, and storing the user data in a file.
+    If the username already exists, the function will recursively call itself
+    until a unique username is provided.
+    
+    :param username_password: is a dictionary that stores usernames as keys and
+    passwords as values.
+    :type: dict
+    :return: None
+    """
+    
+    # The code snippet is attempting to validate a new username input by the
+    # user. If the new username already exists in the `username_password`
+    # dictionary, it will prompt the user to input another username. The
+    # `validate_username` function is expected to handle the validation of the
+    # new username. If the username is valid, the code will proceed with the
+    # registration process by calling the `reg_user` function.
+    new_username = input_validation("New Username: ")
     if new_username in username_password.keys():
         print("The user with this name is already exist. Please could you"
               " input another user name")
@@ -45,10 +81,10 @@ def reg_user(username_password):
 
     while True:
         # - Request input of a new password
-        new_password = validate_username("New Password: ")
+        new_password = input_validation("New Password: ")
 
         # - Request input of password confirmation.
-        confirm_password = validate_username("Confirm Password: ")
+        confirm_password = input_validation("Confirm Password: ")
 
         # - Check if the new password and confirmed password are the same.
         if new_password == confirm_password:
@@ -65,6 +101,8 @@ def reg_user(username_password):
         # - Otherwise you present a relevant message.
         else:
             print("Passwords do no match. Please retry.")
+
+
 ##===========================================================================
 def add_task(task_list, username_password):
     '''Allow a user to add a new task to task.txt file
@@ -73,12 +111,12 @@ def add_task(task_list, username_password):
         - A title of a task,
         - A description of the task and 
         - the due date of the task.'''
-    task_username = validate_username("Name of person assigned to task: ")
+    task_username = input_validation("Name of person assigned to task: ")
     if task_username not in username_password.keys():
         print("User does not exist. Please enter a valid username")
         return add_task(task_list, username_password)
-    task_title = validate_username("Title of Task: ")
-    task_description = validate_username("Description of Task: ")
+    task_title = input_validation("Title of Task: ")
+    task_description = input_validation("Description of Task: ")
     due_date_time = date_validation()
 
 
@@ -147,13 +185,13 @@ def view_user_task(task_list, curr_user):
         message_task_choice = ("Please enter either: \n"
                                "a specific task (by entering Task ID number)\n"
                                "‘-1’ to return to the main menu\n: ")
-        user_task_choice = validate_username(message_task_choice)
+        user_task_choice = input_validation(message_task_choice)
         print('-'*79)
         if user_task_choice in user_tasks:
             message_mark_or_edit = ("Please enter:\n"
             "'m' - if you would like to mark the task as complete\n"
             "'e' - if you would like to edit the task\n: ")
-            mark_or_edit_choice = validate_username(message_mark_or_edit)
+            mark_or_edit_choice = input_validation(message_mark_or_edit)
             print('-'*79)
 ###==========================================================================
             if mark_or_edit_choice == 'm':
@@ -249,16 +287,14 @@ def user_overview_report(task_list, username_password):
     return edited_data
 ##===========================================================================
 def total_amount_of_user_task(task_list, username_password):
-    s = {}
+    divt_users_with_their_tasks = {}
     for user in username_password.keys():
-        counter = 0
-        t = []
+        list__of_particular_user_task = []
         for task in task_list:
             if user == task['username']:
-                counter += 1
-                t.append(task)
-            s[user] = t
-    return s
+                list__of_particular_user_task.append(task)
+            divt_users_with_their_tasks[user] = list__of_particular_user_task
+    return divt_users_with_their_tasks
 ##===========================================================================
 def date_validation():
     while True:
@@ -274,14 +310,26 @@ def date_validation():
     else:
         print("The due date cannot be before the current date.")
         return date_validation()
-##===========================================================================
-def validate_username(message):
 
+
+##===========================================================================
+def input_validation(message: str) -> str:
+    """
+    Removes spaces at the beginning and end of input and also checks for empty
+    input recursively prompting a user for valid input.
+
+    :param message: Massage that will display to a user.
+    :type message: str
+    :return: Validated user input.
+    :rtype: str
+    """
+    # Removes spaces at the beginning and end of input
     user_input = input(message).strip()
 
+    # Checks for empty input recursively prompting a user for valid input
     if user_input == "":
         print("Sorry, but you inputed nothing.")
-        return validate_username(message)
+        return input_validation(message)
     else:
         return user_input
 ##===========================================================================
@@ -325,7 +373,7 @@ def change_username(username_password, user_task_choice, task_list):
     while True:
         message = ("Please enter the name of the person to whom you want to"
         " assign the task to: ")
-        new_assigned_user = validate_username(message)
+        new_assigned_user = input_validation(message)
         if new_assigned_user in username_password.keys():
             task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
             write_tasks_to_file(task_list, path_tasks_txt)
@@ -340,7 +388,7 @@ def edit_task(user_task_choice, task_list, username_password):
                            " to whom the task is assigned\n"
                            "'d' if you want to change the due date of the task\n"
                            "any other button to choose another task: ")
-        edit_task_choice = validate_username(display_choices)
+        edit_task_choice = input_validation(display_choices)
 
         if edit_task_choice == 'n':
             change_username(username_password, user_task_choice, task_list)
@@ -369,6 +417,13 @@ def write_tasks_to_file(task_list, path_tasks_txt):
             task_list_to_write.append(";".join(str_attrs))
         task_file.write("\n".join(task_list_to_write))
 ##===========================================================================
+curr_date = datetime.now()
+DATETIME_STRING_FORMAT = "%Y-%m-%d"
+path_user_txt = "user.txt"
+path_tasks_txt = "tasks.txt"
+path_task_overview_txt = "task_overview.txt"
+path_user_overview_txt = "user_overview.txt"
+
 
 # Create tasks.txt if it doesn't exist
 if not os.path.exists(path_tasks_txt):
