@@ -26,7 +26,6 @@ def display_menu(curr_user: str) -> str:
         function returns the selected menu option as a lowercase string.
     :rtype: str
     """
-
     # Checking if the current user is 'admin'. If the current user is 'admin',
     # it will display a menu with additional options: generating a report and
     # displaying statistics.
@@ -66,39 +65,34 @@ def reg_user(username_password: dict) -> None:
     :type: dict
     :return: None
     """
-    
-    # The code snippet is attempting to validate a new username input by the
-    # user. If the new username already exists in the `username_password`
-    # dictionary, it will prompt the user to input another username. The
-    # `validate_username` function is expected to handle the validation of the
-    # new username. If the username is valid, the code will proceed with the
-    # registration process by calling the `reg_user` function.
+    # Check if the new username already exists, it will recursively prompt the
+    # user to input another username.
     new_username = input_validation("New Username: ")
     if new_username in username_password.keys():
-        print("The user with this name is already exist. Please could you"
+        print("The user with this name already exists. Please could you"
               " input another user name")
         return reg_user(username_password)
 
     while True:
-        # - Request input of a new password
+        # Request input of a new password.
         new_password = input_validation("New Password: ")
 
-        # - Request input of password confirmation.
+        # Request input of password confirmation.
         confirm_password = input_validation("Confirm Password: ")
 
-        # - Check if the new password and confirmed password are the same.
+        # Check if the new password and confirmed password are the same.
         if new_password == confirm_password:
-            # - If they are the same, add them to the user.txt file,
+            # If they are the same, add them to the user.txt file,
             print("New user added")
             username_password[new_username] = new_password
-            
+
             with open(path_user_txt, "w") as out_file:
                 user_data = []
                 for k in username_password:
                     user_data.append(f"{k};{username_password[k]}")
                 out_file.write("\n".join(user_data))
             break
-        # - Otherwise you present a relevant message.
+        # Otherwise you present a relevant message.
         else:
             print("Passwords do no match. Please retry.")
 
@@ -110,19 +104,22 @@ def add_task(task_list, username_password):
         - A username of the person whom the task is assigned to,
         - A title of a task,
         - A description of the task and 
-        - the due date of the task.'''
+        - The due date of the task.
+    '''
+
+    # Check if the input user exists by recursively prompting the user for
+    # valid input.
     task_username = input_validation("Name of person assigned to task: ")
     if task_username not in username_password.keys():
         print("User does not exist. Please enter a valid username")
         return add_task(task_list, username_password)
+
+    # Ask the user for necessary inputs.
     task_title = input_validation("Title of Task: ")
     task_description = input_validation("Description of Task: ")
     due_date_time = date_validation()
 
-
-    # Then get the current date.
-    ''' Add the data to the file task.txt and
-        Include 'No' to indicate if the task is complete.'''
+    # Creates a new task adding all inputed early data as a dictionary.
     new_task = {
         'task_ID': str(len(task_list) + 1),
         "username": task_username,
@@ -133,12 +130,14 @@ def add_task(task_list, username_password):
         "completed": False
     }
 
+    # Adds the new task to task_list and writes it to the file.
     task_list.append(new_task)
     write_tasks_to_file(task_list, path_tasks_txt)
 
     print("Task successfully added.")
     print('-'*79)
-    # print(task_list)
+
+
 ##===========================================================================
 def view_all_tasks(task_list):
     '''Reads the task from task.txt file and prints to the console in the 
@@ -296,15 +295,24 @@ def total_amount_of_user_task(task_list, username_password):
             divt_users_with_their_tasks[user] = list__of_particular_user_task
     return divt_users_with_their_tasks
 ##===========================================================================
-def date_validation():
+def date_validation() -> str:
+    """
+    Checks if the input date is in the proper format and later than the current
+    date.
+
+    :return: Date in format (YYYY-MM-DD)
+    :rtype: str
+    """
+    # Checks if the input date is in the proper format.
     while True:
         try:
             task_due_date = input("Due date of task (YYYY-MM-DD): ")
             due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
             break
-
         except ValueError:
             print("Invalid datetime format. Please use the format specified")
+    
+    # Checks if the input date is later than the current date.
     if due_date_time >= curr_date:
         return due_date_time.date()
     else:
