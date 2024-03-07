@@ -12,31 +12,6 @@ path_task_overview_txt = "task_overview.txt"
 path_user_overview_txt = "user_overview.txt"
 
 ##===========================================================================
-def date_validation():
-    while True:
-        try:
-            task_due_date = input("Due date of task (YYYY-MM-DD): ")
-            due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
-            break
-
-        except ValueError:
-            print("Invalid datetime format. Please use the format specified")
-    if due_date_time >= curr_date:
-        return due_date_time.date()
-    else:
-        print("The due date cannot be before the current date.")
-        return date_validation()
-##===========================================================================
-def validate_username(message):
-
-    user_input = input(message).strip()
-
-    if user_input == "":
-        print("Sorry, but you inputed nothing.")
-        return validate_username(message)
-    else:
-        return user_input
-##===========================================================================
 def display_menu(curr_user):
     if curr_user == 'admin':
         menu = validate_username('''Select one of the following Options below:
@@ -192,91 +167,6 @@ def view_user_task(task_list, curr_user):
         else:
             print("You entered task that do not assigned to particular user.")
 ##===========================================================================
-## write to file
-def write_tasks_to_file(task_list, path_tasks_txt):
-
-    with open(path_tasks_txt, "w") as task_file:
-        task_list_to_write = []
-        for t in task_list:
-            str_attrs = [
-                t['task_ID'],
-                t['username'],
-                t['title'],
-                t['description'],
-                t['due_date'].strftime(DATETIME_STRING_FORMAT),
-                t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
-                "Yes" if t['completed'] else "No"
-            ]
-            task_list_to_write.append(";".join(str_attrs))
-        task_file.write("\n".join(task_list_to_write))
-##===========================================================================
-def create_exist_file(path_tasks_txt):
-    if not os.path.exists(path_tasks_txt):
-        with open(path_tasks_txt, 'w') as default_file:
-            pass
-##===========================================================================
-##===========================================================================
-def change_username(username_password, user_task_choice, task_list):
-    print('-'*79)
-    print(f"All usernames of people: ", end='')
-    print(', '.join(username_password.keys()))
-    while True:
-        message = ("Please enter the name of the person to whom you want to"
-        " assign the task to: ")
-        new_assigned_user = validate_username(message)
-        if new_assigned_user in username_password.keys():
-            task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
-            write_tasks_to_file(task_list, path_tasks_txt)
-            break
-        else:
-            print("Unexist person or incorrect person name!")
-##===========================================================================
-def edit_task(user_task_choice, task_list, username_password):
-    if task_list[int(user_task_choice) - 1]['completed'] == False:
-        display_choices = ("Please enter:\n"
-                           "'n' if you want to change the username of the person"
-                           " to whom the task is assigned\n"
-                           "'d' if you want to change the due date of the task\n"
-                           "any other button to choose another task: ")
-        edit_task_choice = validate_username(display_choices)
-
-        if edit_task_choice == 'n':
-            change_username(username_password, user_task_choice, task_list)
-
-        if edit_task_choice == 'd':
-            task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
-            write_tasks_to_file(task_list, path_tasks_txt)
-    else:
-        print("This task is already completed.")
-##===========================================================================
-def completed_task(task_list):
-    completed = 0
-    for task in task_list:
-        if task['completed']:
-            completed += 1
-    return completed
-##===========================================================================
-def uncompleted_task(task_list):
-    uncompleted = 0
-    for task in task_list:
-        if task['completed'] != True:
-            uncompleted += 1
-    return uncompleted
-##===========================================================================
-def uncompleted_overdue_tasks(task_list):
-    uncompleted_overdue_list =[]
-    for task in task_list:
-        if task['completed'] == False and task['due_date'] <= curr_date:
-            uncompleted_overdue_list.append(task)
-    return uncompleted_overdue_list
-##===========================================================================
-def overdue(uncompleted_overdue):
-    counter = 0
-    for task in uncompleted_overdue:
-        if task['due_date'] <= curr_date:
-            counter += 1
-    return counter
-##===========================================================================
 def task_overview_report(task_list):
     if len(task_list) == 0:
         return print("Sorry, but you do not have any tasks yet")
@@ -359,7 +249,6 @@ def user_overview_report(task_list, username_password):
     return edited_data
 ##===========================================================================
 def total_amount_of_user_task(task_list, username_password):
-    g = {}
     s = {}
     for user in username_password.keys():
         counter = 0
@@ -368,9 +257,117 @@ def total_amount_of_user_task(task_list, username_password):
             if user == task['username']:
                 counter += 1
                 t.append(task)
-            g[user] = counter
             s[user] = t
     return s
+##===========================================================================
+def date_validation():
+    while True:
+        try:
+            task_due_date = input("Due date of task (YYYY-MM-DD): ")
+            due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
+            break
+
+        except ValueError:
+            print("Invalid datetime format. Please use the format specified")
+    if due_date_time >= curr_date:
+        return due_date_time.date()
+    else:
+        print("The due date cannot be before the current date.")
+        return date_validation()
+##===========================================================================
+def validate_username(message):
+
+    user_input = input(message).strip()
+
+    if user_input == "":
+        print("Sorry, but you inputed nothing.")
+        return validate_username(message)
+    else:
+        return user_input
+##===========================================================================
+def overdue(uncompleted_overdue):
+    counter = 0
+    for task in uncompleted_overdue:
+        if task['due_date'] <= curr_date:
+            counter += 1
+    return counter
+##===========================================================================
+def completed_task(task_list):
+    completed = 0
+    for task in task_list:
+        if task['completed']:
+            completed += 1
+    return completed
+##===========================================================================
+def uncompleted_task(task_list):
+    uncompleted = 0
+    for task in task_list:
+        if task['completed'] != True:
+            uncompleted += 1
+    return uncompleted
+##===========================================================================
+def uncompleted_overdue_tasks(task_list):
+    uncompleted_overdue_list =[]
+    for task in task_list:
+        if task['completed'] == False and task['due_date'] <= curr_date:
+            uncompleted_overdue_list.append(task)
+    return uncompleted_overdue_list
+##===========================================================================
+def create_exist_file(path_tasks_txt):
+    if not os.path.exists(path_tasks_txt):
+        with open(path_tasks_txt, 'w') as default_file:
+            pass
+##===========================================================================
+def change_username(username_password, user_task_choice, task_list):
+    print('-'*79)
+    print(f"All usernames of people: ", end='')
+    print(', '.join(username_password.keys()))
+    while True:
+        message = ("Please enter the name of the person to whom you want to"
+        " assign the task to: ")
+        new_assigned_user = validate_username(message)
+        if new_assigned_user in username_password.keys():
+            task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
+            write_tasks_to_file(task_list, path_tasks_txt)
+            break
+        else:
+            print("Unexist person or incorrect person name!")
+##===========================================================================
+def edit_task(user_task_choice, task_list, username_password):
+    if task_list[int(user_task_choice) - 1]['completed'] == False:
+        display_choices = ("Please enter:\n"
+                           "'n' if you want to change the username of the person"
+                           " to whom the task is assigned\n"
+                           "'d' if you want to change the due date of the task\n"
+                           "any other button to choose another task: ")
+        edit_task_choice = validate_username(display_choices)
+
+        if edit_task_choice == 'n':
+            change_username(username_password, user_task_choice, task_list)
+
+        if edit_task_choice == 'd':
+            task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
+            write_tasks_to_file(task_list, path_tasks_txt)
+    else:
+        print("This task is already completed.")
+##===========================================================================
+## write to file
+def write_tasks_to_file(task_list, path_tasks_txt):
+
+    with open(path_tasks_txt, "w") as task_file:
+        task_list_to_write = []
+        for t in task_list:
+            str_attrs = [
+                t['task_ID'],
+                t['username'],
+                t['title'],
+                t['description'],
+                t['due_date'].strftime(DATETIME_STRING_FORMAT),
+                t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
+                "Yes" if t['completed'] else "No"
+            ]
+            task_list_to_write.append(";".join(str_attrs))
+        task_file.write("\n".join(task_list_to_write))
 ##===========================================================================
 
 # Create tasks.txt if it doesn't exist
@@ -400,6 +397,7 @@ for task_ID, t_str in enumerate(task_data, 1):
     curr_t['completed'] = True if task_components[6] == "Yes" else False
 
     task_list.append(curr_t)
+
 
 
 #====Login Section====
