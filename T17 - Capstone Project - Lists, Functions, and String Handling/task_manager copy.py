@@ -1,17 +1,10 @@
-# Notes:
-# 1. Use the following username and password to access the admin rights
-# username: admin
-# password: password
-# 2. Ensure you open the whole folder for this task in VS Code otherwise the
-# program will look in your root directory for the text files.
 
 #=====importing libraries===========
 import os
 from datetime import datetime, date
-# from All_done_functions import *
+
+
 curr_date = datetime.now()
-
-
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 path_user_txt = "user.txt"
 path_tasks_txt = "tasks.txt"
@@ -71,7 +64,8 @@ def reg_user(username_password):
     # - Request input of a new username
     new_username = validate_username("New Username: ")
     if new_username in username_password.keys():
-        print("The user with this name is already exist. Please could you input another user name")
+        print("The user with this name is already exist. Please could you"
+              " input another user name")
         return reg_user(username_password)
 
     while True:
@@ -143,7 +137,8 @@ def view_all_tasks(task_list):
         disp_str = f"Task ID: \t {t['task_ID']}\n"
         disp_str += f"Task: \t\t {t['title']}\n"
         disp_str += f"Assigned to: \t {t['username']}\n"
-        disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n"
+        disp_str += (f"Date Assigned: \t "
+                     f"{t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n")
         disp_str += f"Due Date: \t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n"
         disp_str += f"Task Complete? \t {"Yes" if t['completed'] is True else "No"}\n"
         disp_str += f"Task Description: \n {t['description']}\n"
@@ -154,15 +149,19 @@ def view_user_task(task_list, curr_user):
            format of Output 2 presented in the task pdf (i.e. includes spacing
            and labelling)
         '''
+    print(f"All the tasks that have been assigned to {curr_user}:\n")
     user_tasks = []
     for t in task_list:
         if t['username'] == curr_user:
             disp_str = f"Task ID: \t {t['task_ID']}\n"
             disp_str += f"Task: \t\t {t['title']}\n"
             disp_str += f"Assigned to: \t {t['username']}\n"
-            disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n"
-            disp_str += f"Due Date: \t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n"
-            disp_str += f"Task Complete? \t {"Yes" if t['completed'] is True else "No"}\n"
+            disp_str += (f"Date Assigned: "
+                         f"\t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n")
+            disp_str += (f"Due Date: "
+                         f"\t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n")
+            disp_str += (f"Task Complete? "
+                         f" \t{"Yes" if t['completed'] is True else "No"}\n")
             disp_str += f"Task Description: \n {t['description']}\n"
             print(disp_str)
             user_tasks.append(t['task_ID'])
@@ -222,8 +221,9 @@ def change_username(username_password, user_task_choice, task_list):
     print(f"All usernames of people: ", end='')
     print(', '.join(username_password.keys()))
     while True:
-        new_assigned_user = validate_username("Please enter the name of the person"
-                                        " to whom you want to assign the task to: ")
+        message = ("Please enter the name of the person to whom you want to"
+        " assign the task to: ")
+        new_assigned_user = validate_username(message)
         if new_assigned_user in username_password.keys():
             task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
             write_tasks_to_file(task_list, path_tasks_txt)
@@ -278,19 +278,27 @@ def overdue(uncompleted_overdue):
     return counter
 ##===========================================================================
 def task_overview_report(task_list):
+    if len(task_list) == 0:
+        return print("Sorry, but you do not have any tasks yet")
+
     total_num_tasks = len(task_list)
     completed_tasks = completed_task(task_list)
     uncompleted_tasks = uncompleted_task(task_list)
     uncompleted_overdue = uncompleted_overdue_tasks(task_list)
     percent_uncompleted_tasks = round((uncompleted_tasks * 100) / total_num_tasks)
-    percent_overdue_tasks = round((overdue(uncompleted_overdue) * 100) / uncompleted_tasks)
+    percent_overdue_tasks = round((overdue(uncompleted_overdue) * 100)
+                                   / uncompleted_tasks)
     with open(path_task_overview_txt, 'w') as task_overview_file:
         content = f"The total number of tasks is:~`{total_num_tasks}\n"
         content += f"The total number of completed tasks is:~`{completed_tasks}\n"
-        content += f"The total number of uncompleted tasks is:~`{uncompleted_tasks}\n"
-        content += f"The total number of uncompleted and overdue tasks is:~`{len(uncompleted_overdue)}\n"
-        content += f"The percentage of tasks that are incomplete:~`{percent_uncompleted_tasks}%\n"
-        content += f"The percentage of tasks that are overdue is:~`{percent_overdue_tasks}%"
+        content += (f"The total number of uncompleted tasks"
+                    f" is:~`{uncompleted_tasks}\n")
+        content += (f"The total number of uncompleted and overdue tasks"
+                    f" is:~`{len(uncompleted_overdue)}\n")
+        content += (f"The percentage of tasks that are incomplete:~`"
+                    f"{percent_uncompleted_tasks}%\n")
+        content += (f"The percentage of tasks that are overdue"
+                    f" is:~`{percent_overdue_tasks}%")
         edited_data = align_to_left(content)
 
         task_overview_file.write(edited_data)
@@ -308,21 +316,21 @@ def align_to_left(content):
 ##===========================================================================
 def user_overview_report(task_list, username_password):
     user_task = total_amount_of_user_task(task_list, username_password)
-    total_users_num = len(user_task)
+    total_users_num = len([user for user in username_password.keys()])
     total_num_tasks = len(task_list)
     users_list = [user for user in user_task.keys()]
 
-    print('_'*79)
     with open(path_user_overview_txt, 'w') as task_overview_file:
         content = f"The total number of registered users is:~`{total_users_num}\n"
         content += f"The total number of tasks is:~`{total_num_tasks}\n"
         for user in users_list:
-            percent_of_tasks = round((len(user_task[user]) * 100) / total_num_tasks)
+            percent_of_tasks = round((len(user_task[user]) * 100)
+                                      / total_num_tasks)
             completed = 0
             for task in user_task[user]:
                 if task['completed']:
                     completed += 1
-            
+
             if len(user_task[user]) == 0:
                 content += f"\nUser '{user}' does not have a task.\n"
                 continue
@@ -330,22 +338,27 @@ def user_overview_report(task_list, username_password):
             percent_of_completed = round(completed * 100 / len(user_task[user]))
             uncompleted = len(user_task[user]) - completed
             percent_of_uncompleted = round(uncompleted * 100 / len(user_task[user]))
-            percent_uncompleted_overdue_tasks = round(len(uncompleted_overdue_tasks(user_task[user])) * 100 / uncompleted)
+            percent_uncompleted_overdue_tasks = round(len
+                (uncompleted_overdue_tasks(user_task[user])) * 100 / uncompleted)
 
             content += f"\n\t{user}\n"
-            content += f"The total number of assigned tasks to the user:~`{len(user_task[user])}\n"
-            content += f"The percentage of the total number of tasks that have been assigned to the user:~`{percent_of_tasks}%\n"
-            content += f"The percentage of the tasks assigned to the user that have been completed:~`{percent_of_completed}%\n"
-            content += f"The percentage of the tasks assigned to the user that must still be completed:~`{percent_of_uncompleted}%\n"
-            content += f"The percentage of the tasks assigned to the user that has not yet been completed and are overdue:~`{percent_uncompleted_overdue_tasks}%\n"
+            content += (f"The total number of assigned tasks to the"
+                        f" user:~`{len(user_task[user])}\n")
+            content += (f"The percentage of the total number of tasks that have"
+                        f" been assigned to the user:~`{percent_of_tasks}%\n")
+            content += (f"The percentage of the tasks assigned to the user"
+                        f" that have been completed:~`{percent_of_completed}%\n")
+            content += (f"The percentage of the tasks assigned to the user that"
+                        f" must still be completed:~`{percent_of_uncompleted}%\n")
+            content += (f"The percentage of the tasks assigned to the user that"
+                        f" have not yet been completed and are "
+                        f"overdue:~`{percent_uncompleted_overdue_tasks}%\n")
         edited_data = align_to_left(content)
 
         task_overview_file.write(edited_data)
-    print("The reports were generated successfully.")
     return edited_data
 ##===========================================================================
 def total_amount_of_user_task(task_list, username_password):
-    users_list = [user for user in username_password.keys()]
     g = {}
     s = {}
     for user in username_password.keys():
@@ -358,7 +371,7 @@ def total_amount_of_user_task(task_list, username_password):
             g[user] = counter
             s[user] = t
     return s
-
+##===========================================================================
 
 # Create tasks.txt if it doesn't exist
 if not os.path.exists(path_tasks_txt):
@@ -380,8 +393,10 @@ for task_ID, t_str in enumerate(task_data, 1):
     curr_t['username'] = task_components[1]
     curr_t['title'] = task_components[2]
     curr_t['description'] = task_components[3]
-    curr_t['due_date'] = datetime.strptime(task_components[4], DATETIME_STRING_FORMAT)
-    curr_t['assigned_date'] = datetime.strptime(task_components[5], DATETIME_STRING_FORMAT)
+    curr_t['due_date'] = (datetime.strptime(task_components[4],
+                                             DATETIME_STRING_FORMAT))
+    curr_t['assigned_date'] = (datetime.strptime(task_components[5], 
+                                                 DATETIME_STRING_FORMAT))
     curr_t['completed'] = True if task_components[6] == "Yes" else False
 
     task_list.append(curr_t)
@@ -451,10 +466,12 @@ while True:
     elif menu == 'gr' and curr_user == 'admin':
         task_overview_report(task_list)
         user_overview_report(task_list, username_password)
+        print("The reports were generated successfully.")
 ##===========================================================================
     elif menu == 'ds' and curr_user == 'admin':
         print(task_overview_report(task_list))
         print(user_overview_report(task_list, username_password))
+        print("The reports were generated successfully.")
 
     elif menu == 'e':
         print('Goodbye!!!')
