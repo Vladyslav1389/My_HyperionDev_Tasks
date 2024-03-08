@@ -244,10 +244,23 @@ def view_user_task(task_list: list, curr_user: str) -> None:
 
 
 ##===========================================================================
-def task_overview_report(task_list):
+def task_overview_report(task_list: list) -> str:
+    """
+    Generates a task overview report based on the provided task list.
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: A formatted string containing the task overview report.
+    :rtype: str
+    """
+
+    # If the task_list is empty, it informs the user that no tasks are
+    # available to avoid zero division.
     if len(task_list) == 0:
         return print("Sorry, but you do not have any tasks yet")
 
+    # The function calculates various task statistics based on the provided
+    # task_list.
     total_num_tasks = len(task_list)
     completed_tasks = completed_task(task_list)
     uncompleted_tasks = uncompleted_task(task_list)
@@ -255,6 +268,9 @@ def task_overview_report(task_list):
     percent_uncompleted_tasks = round((uncompleted_tasks * 100) / total_num_tasks)
     percent_overdue_tasks = round((overdue(uncompleted_overdue) * 100)
                                    / uncompleted_tasks)
+
+    # Writes all calculated statistics to task_overview.txt file in a
+    # user-friendly way.
     with open(path_task_overview_txt, 'w') as task_overview_file:
         content = f"The total number of tasks is:~`{total_num_tasks}\n"
         content += f"The total number of completed tasks is:~`{completed_tasks}\n"
@@ -266,10 +282,15 @@ def task_overview_report(task_list):
                     f"{percent_uncompleted_tasks}%\n")
         content += (f"The percentage of tasks that are overdue"
                     f" is:~`{percent_overdue_tasks}%")
+
+        # The align_to_left function is used to format the content for
+        # readability.
         edited_data = align_to_left(content)
 
         task_overview_file.write(edited_data)
     return edited_data
+
+
 ##===========================================================================
 def align_to_left(content):
     splited = content.split('\n')
