@@ -106,7 +106,7 @@ def add_task(task_list: list, username_password: dict) -> None:
         - A description of the task and 
         - The due date of the task.
 
-    :param task_list: List of all tasks.
+    :param task_list: List of dictionaries containing all tasks.
     :type task_list: list
     :param username_password: Dictionary that stores usernames as keys and
         passwords as values.
@@ -150,7 +150,7 @@ def view_all_tasks(task_list: list) -> None:
     """
     Displays all tasks in a user-friendly way.
 
-    :param task_list: List of all tasks.
+    :param task_list: List of dictionaries containing all tasks.
     :type task_list: list
     :return: None
     """
@@ -167,14 +167,27 @@ def view_all_tasks(task_list: list) -> None:
         disp_str += f"Task Complete? \t {"Yes" if t['completed'] is True else "No"}\n"
         disp_str += f"Task Description: \n {t['description']}\n"
         print(disp_str)
+
+
 ##===========================================================================
-def view_user_task(task_list, curr_user):
-    '''Reads the task from task.txt file and prints to the console in the 
-           format of Output 2 presented in the task pdf (i.e. includes spacing
-           and labelling)
-        '''
+def view_user_task(task_list: list, curr_user: str) -> None:
+    """
+    Displays tasks assigned to a specific user.
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :param curr_user: Username of the user whose tasks need to be displayed.
+    :type curr_user: str
+    :return: None
+    """
+
     print(f"All the tasks that have been assigned to {curr_user}:\n")
+
+    # List to store tasks ID assigned to the current user.
     user_tasks = []
+
+    # Iterate through task_list and display tasks assigned to the specific user
+    # in a user-friendly way.
     for t in task_list:
         if t['username'] == curr_user:
             disp_str = f"Task ID: \t {t['task_ID']}\n"
@@ -188,8 +201,12 @@ def view_user_task(task_list, curr_user):
                          f" \t{"Yes" if t['completed'] is True else "No"}\n")
             disp_str += f"Task Description: \n {t['description']}\n"
             print(disp_str)
+
+            # Add to the list each task ID assigned to the current user.
             user_tasks.append(t['task_ID'])
 
+    # Asks users to decide whether to choose a particular task to edit or
+    # return to the main menu.
     user_task_choice = ''
     while user_task_choice != '-1':
         print('-'*79)
@@ -198,23 +215,34 @@ def view_user_task(task_list, curr_user):
                                "‘-1’ to return to the main menu\n: ")
         user_task_choice = input_validation(message_task_choice)
         print('-'*79)
+
+        # Checks if user task choice is assigned to the user, if so asks to
+        # choose either mark the task as complete or edit it.
         if user_task_choice in user_tasks:
             message_mark_or_edit = ("Please enter:\n"
             "'m' - if you would like to mark the task as complete\n"
             "'e' - if you would like to edit the task\n: ")
             mark_or_edit_choice = input_validation(message_mark_or_edit)
             print('-'*79)
-###==========================================================================
+
+            # If a user chooses to mark the task as complete change the value
+            # of the 'completed' key value to True, rewrite it to the task.txt
+            # file, and change the user_task_choice to '-1' to break the while
+            # loop.
             if mark_or_edit_choice == 'm':
                 task_list[int(user_task_choice) - 1]['completed'] = True
                 user_task_choice = '-1'
-                create_exist_file(path_tasks_txt)
                 write_tasks_to_file(task_list, path_tasks_txt)
-###==========================================================================
+
+            # If a user chooses to edit the task call a function that allows
+            # the user to change the due date or username of the person to whom
+            # the task is assigned.
             if mark_or_edit_choice == 'e':
                 edit_task(user_task_choice, task_list, username_password)
         else:
             print("You entered task that do not assigned to particular user.")
+
+
 ##===========================================================================
 def task_overview_report(task_list):
     if len(task_list) == 0:
