@@ -417,10 +417,25 @@ def total_amount_of_user_task(task_list: list, username_password: dict) -> dict:
 
 
 ##===========================================================================
-def align_to_left(content):
+def align_to_left(content: str) -> str:
+    """
+    Aligns the lines of input content to the left by adding indentation as
+    underscores.
+
+    :param content: The input content with lines separated by newline characters.
+    :type content: str
+    :return: The aligned content with added indentation to the left.
+    :rtype: str
+    """
+
+    # Split the content into individual lines. Find the length of the longest
+    # line. Initialize an empty string to store the aligned content.
     splited = content.split('\n')
     max_len = len(max(splited, key=len))
     aligned_content = ''
+
+    # Iterates through lines. Calculate the indentation needed for each line.
+    # Replace special characters with indentation.
     for line in splited:
         indentation = '_'*((max_len - len(line)) + 3)
         line = line.replace('~`', indentation)
@@ -445,7 +460,7 @@ def date_validation() -> str:
             break
         except ValueError:
             print("Invalid datetime format. Please use the format specified")
-    
+
     # Checks if the input date is later than the current date.
     if due_date_time >= curr_date:
         return due_date_time.date()
@@ -474,6 +489,8 @@ def input_validation(message: str) -> str:
         return input_validation(message)
     else:
         return user_input
+
+
 ##===========================================================================
 def overdue(uncompleted_overdue):
     counter = 0
@@ -481,6 +498,8 @@ def overdue(uncompleted_overdue):
         if task['due_date'] <= curr_date:
             counter += 1
     return counter
+
+
 ##===========================================================================
 def completed_task(task_list):
     completed = 0
@@ -508,20 +527,43 @@ def create_exist_file(path_tasks_txt):
         with open(path_tasks_txt, 'w') as default_file:
             pass
 ##===========================================================================
-def change_username(username_password, user_task_choice, task_list):
+def change_username(username_password: dict, user_task_choice: str,
+                    task_list: list) -> None:
+    """
+    Changes the assigned username for a specific task and checks if the
+    username exists.
+
+    :param username_password: Dictionary that stores usernames as keys and
+        passwords as values.
+    :type username_password: dict
+    :param user_task_choice: User choice of a specific task (by entering Task
+        ID number).
+    :type user_task_choice: str
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: None
+    """
+
+    # Displays all usernames to whom it is possible to assign the task.
     print('-'*79)
     print(f"All usernames of people: ", end='')
     print(', '.join(username_password.keys()))
+
+    # Changes the assigned username for a specific task.
     while True:
         message = ("Please enter the name of the person to whom you want to"
         " assign the task to: ")
         new_assigned_user = input_validation(message)
+
+        # Checks if the username exists and write it to the tasks.txt.
         if new_assigned_user in username_password.keys():
             task_list[int(user_task_choice) - 1]['username'] = new_assigned_user
             write_tasks_to_file(task_list, path_tasks_txt)
             break
         else:
             print("Unexist person or incorrect person name!")
+
+
 ##===========================================================================
 def edit_task(user_task_choice, task_list, username_password):
     if task_list[int(user_task_choice) - 1]['completed'] == False:
