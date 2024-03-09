@@ -246,7 +246,10 @@ def view_user_task(task_list: list, curr_user: str) -> None:
 ##===========================================================================
 def task_overview_report(task_list: list) -> str:
     """
-    Generates a task overview report based on the provided task list.
+    Generates a task overview report based on the calculated statistics
+    including the total number of tasks, completed tasks, uncompleted
+    tasks, uncompleted overdue tasks, percentages of incomplete tasks, and
+    overdue tasks are also computed.
 
     :param task_list: List of dictionaries containing all tasks.
     :type task_list: list
@@ -292,37 +295,65 @@ def task_overview_report(task_list: list) -> str:
 
 
 ##===========================================================================
-def align_to_left(content):
-    splited = content.split('\n')
-    max_len = len(max(splited, key=len))
-    aligned_content = ''
-    for line in splited:
-        indentation = '_'*((max_len - len(line)) + 3)
-        line = line.replace('~`', indentation)
-        aligned_content += line + "\n"
-    return aligned_content
-##===========================================================================
-def user_overview_report(task_list, username_password):
+def user_overview_report(task_list: list, username_password: dict) -> str:
+    """
+    Generates an overview report for registered users based on tasks. 
+    The report includes the total number of registered users and the total
+    number of tasks. For each user, it computes the percentage of tasks 
+    completed, uncompleted, and uncompleted overdue tasks.
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :param username_password: Dictionary that stores usernames as keys and
+        passwords as values.
+    :type username_password: dict
+    :return: A formatted string containing the task overview report for each
+        user.
+    :rtype: str
+    """
+
+    # Creates a dictionary with users as keys and their corresponding tasks as
+    # values.
     user_task = total_amount_of_user_task(task_list, username_password)
+
+    # Determines how many users are registered in the program.
     total_users_num = len([user for user in username_password.keys()])
+
+    # Determines how many tasks are registered in the program.
     total_num_tasks = len(task_list)
+
+    # Creates a list of users to make it easier to iterate through it in the
+    # future.
     users_list = [user for user in user_task.keys()]
 
+    # Writes all calculated statistics to user_overview.txt file in a
+    # user-friendly way.
     with open(path_user_overview_txt, 'w') as task_overview_file:
         content = f"The total number of registered users is:~`{total_users_num}\n"
         content += f"The total number of tasks is:~`{total_num_tasks}\n"
+
+        # Iterates through each user
         for user in users_list:
+
+            # Calculates the percentage of tasks that are assigned to the
+            # particular user.
             percent_of_tasks = round((len(user_task[user]) * 100)
                                       / total_num_tasks)
+
+            # Initializes a counter to count how many tasks the particular
+            # user has completed.
             completed = 0
             for task in user_task[user]:
                 if task['completed']:
                     completed += 1
 
+            # Checks the number of user tasks to avoid zero division, and
+            # displays that the particular user does not have any tasks.
             if len(user_task[user]) == 0:
                 content += f"\nUser '{user}' does not have a task.\n"
                 continue
 
+            # # Calculate task-related statistics for each user
             percent_of_completed = round(completed * 100 / len(user_task[user]))
             uncompleted = len(user_task[user]) - completed
             percent_of_uncompleted = round(uncompleted * 100 / len(user_task[user]))
@@ -341,20 +372,62 @@ def user_overview_report(task_list, username_password):
             content += (f"The percentage of the tasks assigned to the user that"
                         f" have not yet been completed and are "
                         f"overdue:~`{percent_uncompleted_overdue_tasks}%\n")
+
+        # The align_to_left function is used to format the content for
+        # readability.
         edited_data = align_to_left(content)
 
         task_overview_file.write(edited_data)
     return edited_data
+
+
 ##===========================================================================
-def total_amount_of_user_task(task_list, username_password):
-    divt_users_with_their_tasks = {}
+def total_amount_of_user_task(task_list: list, username_password: dict) -> dict:
+    """
+    Creates a dictionary with users as keys and their corresponding tasks as
+    values by iterating through username_password dictionary and assigning only
+    particular user's tasks as a list of nested tasks dictionaries.
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :param username_password: Dictionary that stores usernames as keys and
+        passwords as values.
+    :type username_password: dict
+    :return: A dictionary where keys are usernames and values are lists of
+        tasks assigned to each user.
+    :rtype: dict
+    """
+
+    # Initialize an empty dictionary to store user-task associations.
+    dict_users_with_their_tasks = {}
+
     for user in username_password.keys():
+
+        # Initialize an empty list for tasks related to a specific user.
         list__of_particular_user_task = []
         for task in task_list:
             if user == task['username']:
+
+                # Append the task to the user's list.
                 list__of_particular_user_task.append(task)
-            divt_users_with_their_tasks[user] = list__of_particular_user_task
-    return divt_users_with_their_tasks
+
+                # Store the user's tasks in the dictionary.
+            dict_users_with_their_tasks[user] = list__of_particular_user_task
+    return dict_users_with_their_tasks
+
+
+##===========================================================================
+def align_to_left(content):
+    splited = content.split('\n')
+    max_len = len(max(splited, key=len))
+    aligned_content = ''
+    for line in splited:
+        indentation = '_'*((max_len - len(line)) + 3)
+        line = line.replace('~`', indentation)
+        aligned_content += line + "\n"
+    return aligned_content
+
+
 ##===========================================================================
 def date_validation() -> str:
     """
