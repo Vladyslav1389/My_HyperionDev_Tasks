@@ -526,6 +526,46 @@ def create_exist_file(path_tasks_txt):
     if not os.path.exists(path_tasks_txt):
         with open(path_tasks_txt, 'w') as default_file:
             pass
+
+##===========================================================================
+def edit_task(username_password: dict, user_task_choice: str,
+              task_list: list) -> None:
+    """
+    Allows the user to edit either the username of the person to whom the task
+    is assigned or the due date of the task.
+
+    :param username_password: Dictionary that stores usernames as keys and
+        passwords as values.
+    :type username_password: dict
+    :param user_task_choice: User choice of a specific task (by entering Task
+        ID number).
+    :type user_task_choice: str
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: None
+    """
+
+    # Checks if the selected task is not completed and asks for the user's
+    # choice.
+    if task_list[int(user_task_choice) - 1]['completed'] == False:
+        display_choices = ("Please enter:\n"
+                           "'n' if you want to change the username of the
+                           " person to whom the task is assigned\n"
+                           "'d' if you want to change the due date of the
+                           " task\n any other button to choose another task: ")
+        edit_task_choice = input_validation(display_choices)
+
+        if edit_task_choice == 'n':
+            change_username(username_password, user_task_choice, task_list)
+
+        # Checks, assigns, and writes to the tasks.txt file the new due date.
+        if edit_task_choice == 'd':
+            task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
+            write_tasks_to_file(task_list, path_tasks_txt)
+    else:
+        print("This task is already completed.")
+
+
 ##===========================================================================
 def change_username(username_password: dict, user_task_choice: str,
                     task_list: list) -> None:
@@ -565,28 +605,21 @@ def change_username(username_password: dict, user_task_choice: str,
 
 
 ##===========================================================================
-def edit_task(user_task_choice, task_list, username_password):
-    if task_list[int(user_task_choice) - 1]['completed'] == False:
-        display_choices = ("Please enter:\n"
-                           "'n' if you want to change the username of the person"
-                           " to whom the task is assigned\n"
-                           "'d' if you want to change the due date of the task\n"
-                           "any other button to choose another task: ")
-        edit_task_choice = input_validation(display_choices)
+def write_tasks_to_file(task_list: list) -> None:
+    """
+    Writes the task list to a text file in a specific format.
 
-        if edit_task_choice == 'n':
-            change_username(username_password, user_task_choice, task_list)
+    :type user_task_choice: str
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: None
+    """
 
-        if edit_task_choice == 'd':
-            task_list[int(user_task_choice) - 1]['due_date'] = date_validation()
-            write_tasks_to_file(task_list, path_tasks_txt)
-    else:
-        print("This task is already completed.")
-##===========================================================================
-## write to file
-def write_tasks_to_file(task_list, path_tasks_txt):
-
+    
     with open(path_tasks_txt, "w") as task_file:
+
+        # For each task in the task list creates nested task lists with all
+        # attributes.
         task_list_to_write = []
         for t in task_list:
             str_attrs = [
@@ -598,8 +631,16 @@ def write_tasks_to_file(task_list, path_tasks_txt):
                 t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
                 "Yes" if t['completed'] else "No"
             ]
+
+            # Joins attributes with semicolons and appends all lists to one
+            # big list.
             task_list_to_write.append(";".join(str_attrs))
+
+        # Write the formatted task strings to the file separates each list by
+        # a new line character.
         task_file.write("\n".join(task_list_to_write))
+
+
 ##===========================================================================
 curr_date = datetime.now()
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
