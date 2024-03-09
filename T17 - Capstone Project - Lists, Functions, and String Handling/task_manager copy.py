@@ -492,8 +492,21 @@ def input_validation(message: str) -> str:
 
 
 ##===========================================================================
-def overdue(uncompleted_overdue):
-    counter = 0
+def overdue(uncompleted_overdue:list) -> int:
+    """
+    Calculates the number of uncompleted tasks that are overdue.
+
+    :param uncompleted_overdue: List of task dictionaries representing
+        uncompleted tasks.
+    :type uncompleted_overdue: list
+    :return: The count of overdue tasks.
+    :rtype: int
+    """
+
+    counter = 0 # Initialize a counter for overdue tasks.
+
+    # Check if the task's due date is earlier than or equal to the current
+    # date.
     for task in uncompleted_overdue:
         if task['due_date'] <= curr_date:
             counter += 1
@@ -501,31 +514,61 @@ def overdue(uncompleted_overdue):
 
 
 ##===========================================================================
-def completed_task(task_list):
+def completed_task(task_list: list) -> int:
+    """
+    Calculates the total number of completed tasks.
+
+   :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: The count of completed tasks.
+    :rtype: int
+    """
+
     completed = 0
     for task in task_list:
         if task['completed']:
             completed += 1
     return completed
+
+
 ##===========================================================================
-def uncompleted_task(task_list):
+def uncompleted_task(task_list: list) -> int:
+    """
+    Calculates the total number of uncompleted tasks.
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: The count of uncompleted tasks.
+    :rtype: int
+    """
+
     uncompleted = 0
     for task in task_list:
         if task['completed'] != True:
             uncompleted += 1
     return uncompleted
+
+
 ##===========================================================================
-def uncompleted_overdue_tasks(task_list):
+def uncompleted_overdue_tasks(task_list: list) -> list:
+    """
+    AI is creating summary for uncompleted_overdue_tasks
+
+    :param task_list: List of dictionaries containing all tasks.
+    :type task_list: list
+    :return: A filtered list of uncompleted tasks that are overdue.
+    :rtype: list
+    """
+
+    # Iterates through each task in the input list, checks if the task is
+    # uncompleted and its due date has passed, and adds it to the
+    # uncompleted_overdue_list.
     uncompleted_overdue_list =[]
     for task in task_list:
         if task['completed'] == False and task['due_date'] <= curr_date:
             uncompleted_overdue_list.append(task)
     return uncompleted_overdue_list
-##===========================================================================
-def create_exist_file(path_tasks_txt):
-    if not os.path.exists(path_tasks_txt):
-        with open(path_tasks_txt, 'w') as default_file:
-            pass
+
 
 ##===========================================================================
 def edit_task(username_password: dict, user_task_choice: str,
@@ -607,15 +650,13 @@ def change_username(username_password: dict, user_task_choice: str,
 ##===========================================================================
 def write_tasks_to_file(task_list: list) -> None:
     """
-    Writes the task list to a text file in a specific format.
+    Writes the task list in a text file in a specific format.
 
-    :type user_task_choice: str
     :param task_list: List of dictionaries containing all tasks.
     :type task_list: list
     :return: None
     """
 
-    
     with open(path_tasks_txt, "w") as task_file:
 
         # For each task in the task list creates nested task lists with all
@@ -650,110 +691,127 @@ path_task_overview_txt = "task_overview.txt"
 path_user_overview_txt = "user_overview.txt"
 
 
-# Create tasks.txt if it doesn't exist
-if not os.path.exists(path_tasks_txt):
-    with open(path_tasks_txt, "w") as default_file:
-        pass
+def main():
+    # Create tasks.txt if it doesn't exist
+    if not os.path.exists(path_tasks_txt):
+        with open(path_tasks_txt, "w") as default_file:
+            pass
 
-with open(path_tasks_txt, 'r') as task_file:
-    task_data = task_file.read().split("\n")
-    task_data = [t for t in task_data if t != ""]
+    # Reads from task.txt file data and stores it as a list.
+    with open(path_tasks_txt, 'r') as task_file:
+        task_data = task_file.read().split("\n")
+        task_data = [t for t in task_data if t != ""]
 
+    # Loads task data from a text file and returns a list of dictionaries.
+    task_list = []
+    for task_ID, t_str in enumerate(task_data, 1):
+        curr_t = {}
 
-task_list = []
-for task_ID, t_str in enumerate(task_data, 1):
-    curr_t = {}
+        # Split by semicolon and manually add each component
+        task_components = t_str.split(";")
+        curr_t['task_ID'] = str(task_ID)
+        curr_t['username'] = task_components[1]
+        curr_t['title'] = task_components[2]
+        curr_t['description'] = task_components[3]
+        curr_t['due_date'] = (datetime.strptime(task_components[4],
+                                                DATETIME_STRING_FORMAT))
+        curr_t['assigned_date'] = (datetime.strptime(task_components[5], 
+                                                    DATETIME_STRING_FORMAT))
+        curr_t['completed'] = True if task_components[6] == "Yes" else False
 
-    # Split by semicolon and manually add each component
-    task_components = t_str.split(";")
-    curr_t['task_ID'] = str(task_ID)
-    curr_t['username'] = task_components[1]
-    curr_t['title'] = task_components[2]
-    curr_t['description'] = task_components[3]
-    curr_t['due_date'] = (datetime.strptime(task_components[4],
-                                             DATETIME_STRING_FORMAT))
-    curr_t['assigned_date'] = (datetime.strptime(task_components[5], 
-                                                 DATETIME_STRING_FORMAT))
-    curr_t['completed'] = True if task_components[6] == "Yes" else False
-
-    task_list.append(curr_t)
-
-
-
-#====Login Section====
-'''This code reads usernames and password from the user.txt file to 
-    allow a user to login.
-'''
-# If no user.txt file, write one with a default account
-if not os.path.exists(path_user_txt):
-    with open(path_user_txt, "w") as default_file:
-        default_file.write("admin;password")
-
-# Read in user_data
-with open(path_user_txt, 'r') as user_file:
-    user_data = user_file.read().split("\n")
-
-# Convert to a dictionary
-username_password = {}
-for user in user_data:
-    username, password = user.split(';')
-    username_password[username] = password
-
-logged_in = False
-while not logged_in:
-
-    print("LOGIN")
-    curr_user = input("Username: ")
-    curr_pass = input("Password: ")
-    if curr_user not in username_password.keys():
-        print("User does not exist")
-        continue
-    elif username_password[curr_user] != curr_pass:
-        print("Wrong password")
-        continue
-    else:
-        print('-'*79)
-        print("Login Successful!")
-        logged_in = True
+        task_list.append(curr_t)
 
 
-while True:
-    # Presenting the menu to the user and 
-    # making sure that the user input is converted to lowercase.
-    print()
-    print('='*79)
-    menu = display_menu(curr_user)
-    print('='*79)
-##gr - generate reports
-##===========================================================================
-    if menu == 'r':
-        reg_user(username_password)
-##===========================================================================
-##===========================================================================
-    elif menu == 'a':
-        add_task(task_list, username_password)
-##===========================================================================
-##===========================================================================
-    elif menu == 'va':
-        view_all_tasks(task_list)
-##===========================================================================
-##===========================================================================
-    elif menu == 'vm':
-        view_user_task(task_list, curr_user)
-##===========================================================================
-    elif menu == 'gr' and curr_user == 'admin':
-        task_overview_report(task_list)
-        user_overview_report(task_list, username_password)
-        print("The reports were generated successfully.")
-##===========================================================================
-    elif menu == 'ds' and curr_user == 'admin':
-        print(task_overview_report(task_list))
-        print(user_overview_report(task_list, username_password))
-        print("The reports were generated successfully.")
 
-    elif menu == 'e':
-        print('Goodbye!!!')
-        exit()
+    #====Login Section====
+    '''This code reads usernames and password from the user.txt file to 
+        allow a user to login.
+    '''
+    # If no user.txt file, write one with a default account
+    if not os.path.exists(path_user_txt):
+        with open(path_user_txt, "w") as default_file:
+            default_file.write("admin;password")
 
-    else:
-        print("You have made a wrong choice, Please Try again")
+    # Read in user_data
+    with open(path_user_txt, 'r') as user_file:
+        user_data = user_file.read().split("\n")
+
+    # Convert to a dictionary
+    username_password = {}
+    for user in user_data:
+        username, password = user.split(';')
+        username_password[username] = password
+
+    # ensures that the user continues to be prompted for login credentials
+    # until they successfully log in.
+    logged_in = False
+    while not logged_in:
+
+        print("LOGIN")
+
+        # The curr_user and curr_pass variables store the username and
+        # password entered by the user.
+        curr_user = input("Username: ")
+        curr_pass = input("Password: ")
+
+        # Checks if the user exists and passwords are matches.
+        if curr_user not in username_password.keys():
+            print("User does not exist")
+            continue
+        elif username_password[curr_user] != curr_pass:
+            print("Wrong password")
+            continue
+        else:
+            print('-'*79)
+            print("Login Successful!")
+            logged_in = True
+
+
+    while True:
+
+        # Presents the menu to the user and validate user's input
+        print()
+        print('='*79)
+        menu = display_menu(curr_user)
+        print('='*79)
+
+    #=== If the user chooses to register a user ==============================
+        if menu == 'r':
+            reg_user(username_password)
+
+    #=== If the user chooses to add a task ===================================
+        elif menu == 'a':
+            add_task(task_list, username_password)
+
+    #=== If the user chooses to view all tasks ===============================
+        elif menu == 'va':
+            view_all_tasks(task_list)
+
+    #=== To view all the tasks that have been assigned to them ===============
+        elif menu == 'vm':
+            view_user_task(task_list, curr_user)
+
+    #=== Generates reports and write it to text files ========================
+        elif menu == 'gr' and curr_user == 'admin':
+            task_overview_report(task_list)
+            user_overview_report(task_list, username_password)
+            print("The reports were generated successfully.")
+
+    # Displays reports to the terminal and writes them to the file ===========
+        elif menu == 'ds' and curr_user == 'admin':
+            print(task_overview_report(task_list))
+            print(user_overview_report(task_list, username_password))
+            print("The reports were generated successfully.")
+
+    # Exit the program =======================================================
+        elif menu == 'e':
+            print('Goodbye!!!')
+            exit()
+
+    # Prints if a user made a wrong choice====================================``
+        else:
+            print("You have made a wrong choice, Please Try again")
+
+
+if __name__ == "__main__":
+    main()
