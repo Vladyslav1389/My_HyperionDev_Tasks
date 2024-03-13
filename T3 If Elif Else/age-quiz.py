@@ -1,10 +1,10 @@
 """
-1. Create a variable that stores user's input.
+1. Create a variable that stores the user's input.
 2. Write if, elif, else statements to separate different conditions.
 """
 
-# Creating an integer variable that stores user's age
-user_age = int(input("Please enter your name : "))
+# Creating an integer variable that stores the user's age
+user_age = int(input("Please enter your age : "))
 
 # Writing each condition by the if-elif-else statement
 if user_age == 21:
