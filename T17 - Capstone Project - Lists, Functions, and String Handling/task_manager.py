@@ -30,7 +30,7 @@ def display_menu(curr_user: str) -> str:
     # it will display a menu with additional options: generating a report and
     # displaying statistics.
     if curr_user == 'admin':
-        menu = input_validation('''Select one of the following Options below:
+        menu = input_validation('''Select one of the following options below:
 r - Registering a user
 a - Adding a task
 va - View all tasks
@@ -42,7 +42,7 @@ e - Exit
         return menu
 
     else:
-        menu = input_validation('''Select one of the following Options below:
+        menu = input_validation('''Select one of the following options below:
 r - Registering a user
 a - Adding a task
 va - View all tasks
@@ -723,19 +723,27 @@ def main():
     for task_ID, t_str in enumerate(task_data, 1):
         curr_t = {}
 
-        # Split by semicolon and manually add each component
+        # Split by semicolon and manually add each component.
         task_components = t_str.split(";")
+
+        # Adds task_ID to the source task.
+        if len(task_components) == 6:
+            task_components.insert(0, task_ID)
+
         curr_t['task_ID'] = str(task_ID)
         curr_t['username'] = task_components[1]
         curr_t['title'] = task_components[2]
         curr_t['description'] = task_components[3]
         curr_t['due_date'] = (datetime.strptime(task_components[4],
                                                 DATETIME_STRING_FORMAT))
-        curr_t['assigned_date'] = (datetime.strptime(task_components[5], 
+        curr_t['assigned_date'] = (datetime.strptime(task_components[5],
                                                     DATETIME_STRING_FORMAT))
         curr_t['completed'] = True if task_components[6] == "Yes" else False
 
         task_list.append(curr_t)
+
+    # Writes tasks to the file.
+    write_tasks_to_file(task_list)
 
 
 
